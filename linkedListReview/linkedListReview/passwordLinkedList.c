@@ -11,7 +11,7 @@ Password* createPasswordList(void) {
     return NULL;
 }
 
-Password* insertPassword(Password* list, int id, char password[]) {
+Password* insertPassword(Password* list, int id, char *password) {
     
     Password *newPassword = (Password*) malloc(sizeof(Password));
     newPassword->id = id;
@@ -62,5 +62,86 @@ void destroyPasswordList(Password *list) {
         currentPassword = currentPassword->next;
         free(aux);
     }
+    
+}
+
+void printList(Password *list) {
+    
+    Password *current = list;
+    
+    while (current != NULL) {
+        printf("ID: %d - PASSWORD: %s\n", current->id, current->password);
+        current = current->next;
+    }
+    
+}
+
+
+Password* getFileInfo(Password *list, char *fileName) {
+    
+    Password* passwordList = createPasswordList();
+    FILE *file;
+    char c = ' ';
+    char strId[MAX_CHAR_ID] = "";
+    char strPassword[MAX_CHAR_PASSWORD] = "";
+    int indexId = 0;
+    int indexPassword = 0;
+    int id = 0;
+    
+    
+    file = fopen(fileName, "r");
+    
+    if (file == NULL) {
+        printf("Error opening file!");
+    }
+    else {
+        do {
+            
+            strcpy(strId, "");
+            indexId = 0;
+            
+            do {
+            
+                c = getc(file);
+                
+                if (c != SEPARATOR && c != EOF) {
+                    strId[indexId] = c;
+                    indexId++;
+                }
+                
+            } while (c != SEPARATOR && c != EOF);
+            
+            strId[indexId] = STRING_FINAL;
+            id = atoi(strId);
+            
+            
+            strcpy(strPassword, "");
+            indexPassword = 0;
+            
+            do {
+                
+                c = getc(file);
+                
+                if (c != NEW_LINE && c != EOF) {
+                    strPassword[indexPassword] = c;
+                    indexPassword++;
+                }
+                
+
+            } while (c != NEW_LINE && c != EOF);
+            
+            
+            if (id != 0) {
+                passwordList = insertPassword(passwordList, id, strPassword);
+            }
+            
+            
+        } while (c != EOF);
+        
+        
+        fclose(file);
+    }
+    
+    return passwordList;
     
 }
