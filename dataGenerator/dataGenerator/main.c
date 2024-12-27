@@ -11,7 +11,7 @@
 int main(int argc, const char * argv[]) {
     
     srand(time(NULL));
-    createDataFiles(100);
+    createDataFiles(100000);
     
     return 0;
 }

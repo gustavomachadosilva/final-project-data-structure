@@ -9,23 +9,30 @@
 
 void createDataFiles(int amount) {
     
-    char amountStr[MAX];
-    char fileName[MAX] = "data";
-    int id = 1;
-    FILE *file;
+    char fileNameOrdered[MAX] = "Ordered";
+    char fileNameNotOrdered[MAX] = "NotOrdered";
+    char fileNameConsult[MAX] = "Consult";
+    char fileNameConsult50[MAX] = "Consult50";
+    char fileNameConsult80[MAX] = "Consult80";
+    int id = INITIAL_ID;
+    FILE *fileOrdered;
+    FILE *fileNotOrdered;
+    FILE *fileConsult;
+    FILE *fileConsult50;
+    FILE *fileConsult80;
     Password passwords[amount];
     Password passwordsNotOrdered[amount];
     Password passwordsNotOrderedForConsultation[amount];
     Password passwordsNotOrderedForConsultation50[amount];
     Password passwordsNotOrderedForConsultation80[amount];
     Password aux;
-    int i, j;
-    int amountPasswords50 = 0;
-    int amountPasswords80 = 0;
+    int i;
     
-    sprintf(amountStr, "%d", amount);
-    strcat(amountStr, "Ordered.txt");
-    strcat(fileName, amountStr);
+    updateFileName(fileNameOrdered, amount);
+    updateFileName(fileNameNotOrdered, amount);
+    updateFileName(fileNameConsult, amount);
+    updateFileName(fileNameConsult50, amount);
+    updateFileName(fileNameConsult80, amount);
     
     for (i = 0; i < amount; i++) {
         
@@ -35,107 +42,17 @@ void createDataFiles(int amount) {
         
     }
     
-    for (i = 0; i < amount; i++) {
-        
-        passwordsNotOrdered[i].id = passwords[i].id;
-        strcpy(passwordsNotOrdered[i].value, passwords[i].value);
-        
-    }
+    shuffleData(passwordsNotOrdered, passwords, amount);
+    shuffleData(passwordsNotOrderedForConsultation, passwords, amount);
     
-    for (i = 0; i < amount; i++) {
-        
-        j = rand() % amount;
-        
-        if (i != j) {
-            aux.id = passwordsNotOrdered[i].id;
-            strcpy(aux.value, passwordsNotOrdered[i].value);
-            
-            passwordsNotOrdered[i].id = passwordsNotOrdered[j].id;
-            strcpy(passwordsNotOrdered[i].value, passwordsNotOrdered[j].value);
-            
-            passwordsNotOrdered[j].id = aux.id;
-            strcpy(passwordsNotOrdered[j].value, aux.value);
-        }
-        
-        
-    }
+    implementWrongValues(passwordsNotOrderedForConsultation50, passwordsNotOrderedForConsultation, amount, FIRST_PERCENTAGE);
+    implementWrongValues(passwordsNotOrderedForConsultation80, passwordsNotOrderedForConsultation, amount, SECOND_PERCENTAGE);
     
-    for (i = 0; i < amount; i++) {
-        
-        passwordsNotOrderedForConsultation[i].id = passwords[i].id;
-        strcpy(passwordsNotOrderedForConsultation[i].value, passwords[i].value);
-        
-    }
-    
-    for (i = 0; i < amount; i++) {
-        
-        j = rand() % amount;
-        
-        if (i != j) {
-            aux.id = passwordsNotOrderedForConsultation[i].id;
-            strcpy(aux.value, passwordsNotOrderedForConsultation[i].value);
-            
-            passwordsNotOrderedForConsultation[i].id = passwordsNotOrderedForConsultation[j].id;
-            strcpy(passwordsNotOrderedForConsultation[i].value, passwordsNotOrderedForConsultation[j].value);
-            
-            passwordsNotOrderedForConsultation[j].id = aux.id;
-            strcpy(passwordsNotOrderedForConsultation[j].value, aux.value);
-        }
-        
-        
-    }
-    
-    for (i = 0; i < amount; i++) {
-        
-        j = rand() % 2;
-        
-        passwordsNotOrderedForConsultation50[i].id = passwordsNotOrderedForConsultation[i].id;
-        
-        if (amountPasswords50 <= (amount / 2) && j == 1) {
-            strcpy(passwordsNotOrderedForConsultation50[i].value, "AAABBBCCC");
-            amountPasswords50++;
-        }
-        else {
-            strcpy(passwordsNotOrderedForConsultation50[i].value, passwordsNotOrderedForConsultation[i].value);
-        }
-        
-    }
-    
-    
-    for (i = 0; i < amount; i++) {
-        
-        j = rand() % 2;
-        
-        passwordsNotOrderedForConsultation80[i].id = passwordsNotOrderedForConsultation[i].id;
-        
-        if (amountPasswords80 <= (amount * 0.8) && j == 1) {
-            strcpy(passwordsNotOrderedForConsultation80[i].value, "AAABBBCCC");
-            amountPasswords80++;
-        }
-        else {
-            strcpy(passwordsNotOrderedForConsultation80[i].value, passwordsNotOrderedForConsultation[i].value);
-        }
-        
-    }
-    
-    
-
-    
-    
-    file = fopen(fileName, "w");
-    
-    if (file == NULL) {
-        printf("Error creating file!\n");
-    }
-    else {
-        
-        for (i = 0; i < amount; i++) {
-            fprintf(file, "%d;%s\n", passwordsNotOrderedForConsultation50[i].id, passwordsNotOrderedForConsultation50[i].value);
-        }
-        
-        fclose(file);
-    }
-    
+    putValuesInTheFile(passwords, fileNameOrdered, amount);
+    putValuesInTheFile(passwordsNotOrdered, fileNameNotOrdered, amount);
+    putValuesInTheFile(passwordsNotOrderedForConsultation, fileNameConsult, amount);
+    putValuesInTheFile(passwordsNotOrderedForConsultation50, fileNameConsult50, amount);
+    putValuesInTheFile(passwordsNotOrderedForConsultation80, fileNameConsult80, amount);
     
 }
 
@@ -190,5 +107,100 @@ char getRandomNumber(void) {
     int randomPosition = rand() % (MAX_NUMBERS);
     
     return numbers[randomPosition];
+    
+}
+
+
+void updateFileName(char fileName[], int amount) {
+    
+    char newFileName[MAX] = "data";
+    char amountStr[MAX] = "";
+    
+    sprintf(amountStr, "%d", amount);
+    strcat(fileName, ".txt");
+    strcat(amountStr, fileName);
+    strcat(newFileName, amountStr);
+    
+    strcpy(fileName, newFileName);
+    
+}
+
+
+void shuffleData(Password destiny[], Password source[], int amount) {
+    
+    int i, j;
+    Password aux;
+    
+    for (i = 0; i < amount; i++) {
+        
+        destiny[i].id = source[i].id;
+        strcpy(destiny[i].value, source[i].value);
+        
+    }
+    
+    for (i = 0; i < amount; i++) {
+        
+        j = rand() % amount;
+        
+        if (i != j) {
+            aux.id = destiny[i].id;
+            strcpy(aux.value, destiny[i].value);
+            
+            destiny[i].id = destiny[j].id;
+            strcpy(destiny[i].value, destiny[j].value);
+            
+            destiny[j].id = aux.id;
+            strcpy(destiny[j].value, aux.value);
+        }
+        
+        
+    }
+    
+}
+
+
+void implementWrongValues(Password destiny[], Password source[], int amount, float percentageWrongValues) {
+    
+    int i, j;
+    int amountWrongPasswords = 0;
+    
+    for (i = 0; i < amount; i++) {
+        
+        destiny[i].id = source[i].id;
+        strcpy(destiny[i].value, source[i].value);
+        
+    }
+    
+    while (amountWrongPasswords < (amount * percentageWrongValues)) {
+        j = rand() % amount;
+        
+        if (strcmp(destiny[j].value, "AAABBBCCC") != 0) {
+            strcpy(destiny[j].value, "AAABBBCCC");
+            amountWrongPasswords++;
+        }
+        
+    }
+    
+}
+
+
+void putValuesInTheFile(Password passwords[], char fileName[], int amount) {
+    
+    FILE *file;
+    int i;
+    
+    file = fopen(fileName, "w");
+    
+    if (file == NULL) {
+        printf("Error opening file: %s", fileName);
+    }
+    else {
+        
+        for (i = 0; i < amount; i++) {
+            fprintf(file, "%d;%s\n", passwords[i].id, passwords[i].value);
+        }
+        
+        fclose(file);
+    }
     
 }
