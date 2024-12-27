@@ -15,17 +15,11 @@ void createDataFiles(int amount) {
     char fileNameConsult50[MAX] = "Consult50";
     char fileNameConsult80[MAX] = "Consult80";
     int id = INITIAL_ID;
-    FILE *fileOrdered;
-    FILE *fileNotOrdered;
-    FILE *fileConsult;
-    FILE *fileConsult50;
-    FILE *fileConsult80;
     Password passwords[amount];
     Password passwordsNotOrdered[amount];
     Password passwordsNotOrderedForConsultation[amount];
     Password passwordsNotOrderedForConsultation50[amount];
     Password passwordsNotOrderedForConsultation80[amount];
-    Password aux;
     int i;
     
     updateFileName(fileNameOrdered, amount);
