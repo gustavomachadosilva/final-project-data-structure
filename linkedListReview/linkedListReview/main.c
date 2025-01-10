@@ -15,7 +15,7 @@ void updateFileName(char fileName[], int amount);
 
 int main(int argc, const char * argv[]) {
     
-    int amount = 100;
+    int amount = 100000;
     
     char fileNameOrdered[MAX_CHAR] = "Ordered";
     char fileNameNotOrdered[MAX_CHAR] = "NotOrdered";
