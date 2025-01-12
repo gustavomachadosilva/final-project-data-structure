@@ -1,13 +1,11 @@
 //
 //  main.c
-//  linkedListReview
-//
-//  Created by Gustavo Machado Silva on 16/12/24.
+//  ABPTreeReview
 //
 
 #include <stdio.h>
-#include "passwordListAnalyzer.h"
-#include "passwordLinkedList.h"
+#include "passwordTreeAnalyzer.h"
+#include "passwordBST.h"
 
 #define MAX_CHAR 100
 
@@ -15,15 +13,15 @@ void updateFileName(char fileName[], int amount);
 
 int main(int argc, const char * argv[]) {
     
-    int amount = 1000;
+    int amount = 10000;
     
     char fileNameOrdered[MAX_CHAR] = "Ordered";
     char fileNameNotOrdered[MAX_CHAR] = "NotOrdered";
     char fileNameConsult[MAX_CHAR] = "Consult";
     char fileNameConsult50[MAX_CHAR] = "Consult50";
     char fileNameConsult80[MAX_CHAR] = "Consult80";
-    Password *passwordListOrdered = createPasswordList();
-    Password *passwordListNotOrdered = createPasswordList();
+    Password *passwordTreeOrdered = createPasswordTree();
+    Password *passwordTreeNotOrdered = createPasswordTree();
     
     updateFileName(fileNameOrdered, amount);
     updateFileName(fileNameNotOrdered, amount);
@@ -31,19 +29,19 @@ int main(int argc, const char * argv[]) {
     updateFileName(fileNameConsult50, amount);
     updateFileName(fileNameConsult80, amount);
     
-    passwordListOrdered = getFileInfo(passwordListOrdered, fileNameOrdered);
-    passwordListNotOrdered = getFileInfo(passwordListNotOrdered, fileNameNotOrdered);
+    passwordTreeOrdered = getFileInfo(passwordTreeOrdered, fileNameOrdered);
+    passwordTreeNotOrdered = getFileInfo(passwordTreeNotOrdered, fileNameNotOrdered);
     
-    analyzesPasswordList(passwordListOrdered, fileNameConsult, amount, 1);
-    analyzesPasswordList(passwordListOrdered, fileNameConsult50, amount, 1);
-    analyzesPasswordList(passwordListOrdered, fileNameConsult80, amount, 1);
+    analyzesPasswordTree(passwordTreeOrdered, fileNameConsult, 1);
+    analyzesPasswordTree(passwordTreeOrdered, fileNameConsult50, 1);
+    analyzesPasswordTree(passwordTreeOrdered, fileNameConsult80, 1);
     
-    analyzesPasswordList(passwordListNotOrdered, fileNameConsult, amount, 0);
-    analyzesPasswordList(passwordListNotOrdered, fileNameConsult50, amount, 0);
-    analyzesPasswordList(passwordListNotOrdered, fileNameConsult80, amount, 0);
+    analyzesPasswordTree(passwordTreeNotOrdered, fileNameConsult, 0);
+    analyzesPasswordTree(passwordTreeNotOrdered, fileNameConsult50, 0);
+    analyzesPasswordTree(passwordTreeNotOrdered, fileNameConsult80, 0);
     
-    destroyPasswordList(passwordListOrdered);
-    destroyPasswordList(passwordListNotOrdered);
+    destroyPasswordTree(passwordTreeOrdered);
+    destroyPasswordTree(passwordTreeNotOrdered);
     
     return 0;
 }
